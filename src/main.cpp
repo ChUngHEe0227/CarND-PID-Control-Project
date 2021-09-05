@@ -30,16 +30,16 @@ string hasData(string s) {
   return "";
 }
 
-int main(int argc, char *argv[]) {
+int main() {
   uWS::Hub h;
 
   PID pid;
   /**
    * TODO: Initialize the pid variable.
    */
-  double init_Kp = atof(argv[1]);
-  double init_Ki = atof(argv[2]);
-  double init_Kd = atof(argv[3]);
+  double init_Kp = 0.15;
+  double init_Ki = 0.0001;
+  double init_Kd = 1.5;
 
   pid.Init(init_Kp,init_Ki,init_Kd);
 
@@ -63,6 +63,7 @@ int main(int argc, char *argv[]) {
           double angle = std::stod(j[1]["steering_angle"].get<string>());
           
           double steer_value = 0;
+        
           pid.UpdateError(cte);
           steer_value =pid.TotalError();
           /**
@@ -71,8 +72,11 @@ int main(int argc, char *argv[]) {
            * NOTE: Feel free to play around with the throttle and speed.
            *   Maybe use another PID controller to control the speed!
            */
-          if (steer_value < -1) steer_value = -1;
-          if (steer_value > 1) steer_value = 1;
+          if (steer_value>1){
+            steer_value = 1;
+          } else if (steer_value <-1){
+            steer_value = -1;
+          }
           // DEBUG
           std::cout << "CTE: " << cte << " Steering Value: " << steer_value 
                     << std::endl;
